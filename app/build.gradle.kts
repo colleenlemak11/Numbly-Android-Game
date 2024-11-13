@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.basicstorage"
+    namespace = "com.example.numbly"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.basicstorage"
+        applicationId = "com.example.numbly"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

@@ -1,4 +1,4 @@
-package com.example.basicstorage.ui.theme
+package com.example.numbly.ui.theme
 
 import android.app.Activity
 import android.os.Build

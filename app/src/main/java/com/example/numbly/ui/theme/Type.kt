@@ -1,4 +1,4 @@
-package com.example.basicstorage.ui.theme
+package com.example.numbly.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

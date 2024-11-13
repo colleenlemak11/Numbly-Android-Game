@@ -1,4 +1,4 @@
-package com.example.basicstorage
+package com.example.numbly
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

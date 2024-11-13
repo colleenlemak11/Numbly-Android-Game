@@ -1,4 +1,4 @@
-package com.example.basicstorage
+package com.example.numbly
 
 import android.app.AlertDialog
 import android.graphics.Color
@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import android.content.Intent
-import android.widget.Toast
 
 class MainActivity : ComponentActivity() {
     private lateinit var textView: TextView

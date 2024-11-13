@@ -1,4 +1,4 @@
-package com.example.basicstorage
+package com.example.numbly
 
 import org.junit.Test
 
