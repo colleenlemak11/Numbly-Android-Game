@@ -1,5 +1,6 @@
 package com.example.numbly
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -36,6 +37,7 @@ class GameActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("GamePrefs", MODE_PRIVATE)
         randomNumber = prefs.getString("randomNumber", null) ?: generateRandomNumber()
         currentGuessRow = prefs.getInt("currentGuessRow", 0)
+        Log.d("GameActivity", "Restored currentGuessRow: $currentGuessRow")
         guessHistory.addAll(prefs.getStringSet("guessHistory", emptySet())!!.toList())
 
         // Set up or restore the grid if available
@@ -70,19 +72,24 @@ class GameActivity : AppCompatActivity() {
             Toast.makeText(this, "Starting new game", Toast.LENGTH_LONG).show()
             resetGameBoard()
             clearSavedGameState()
+            currentGuessRow = 0
+            Log.d("GameActivity", "Reset currentGuessRow to 0 in onResume()")
+        }
+        else {
+            currentGuessRow = prefs.getInt("currentGuessRow", 0)
+            Log.d("GameActivity", "else stmt currentGuessRow: $currentGuessRow")
         }
     }
 
-    // Save game state method to reuse in multiple lifecycle methods
     private fun saveGameState() {
         val prefs = getSharedPreferences("GamePrefs", MODE_PRIVATE).edit()
         prefs.putString("randomNumber", randomNumber)
         prefs.putInt("currentGuessRow", currentGuessRow)
+        Log.d("GameActivity", "saveGameState $currentGuessRow")
         prefs.putStringSet("guessHistory", guessHistory.toSet())
         prefs.apply()
     }
 
-    // Save instance state to preserve data
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("randomNumber", randomNumber)
@@ -90,7 +97,6 @@ class GameActivity : AppCompatActivity() {
         outState.putStringArrayList("guessHistory", ArrayList(guessHistory))
     }
 
-    // Restore instance state when the app resumes
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         randomNumber = savedInstanceState.getString("randomNumber") ?: generateRandomNumber()
@@ -105,7 +111,6 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun setupGuessGrid() {
-        // Create 5x5 TextViews dynamically
         for (i in 0 until 25) {
             val textView = TextView(this).apply {
                 layoutParams = GridLayout.LayoutParams().apply {
@@ -114,16 +119,15 @@ class GameActivity : AppCompatActivity() {
                     setMargins(4, 4, 4, 4)
                 }
                 textSize = 40f
-                gravity = android.view.Gravity.CENTER
+                gravity = Gravity.CENTER
                 setBackgroundResource(android.R.color.white)
-                text = " " // Initialize with empty text
+                text = " "
             }
             guessGrid.addView(textView)
         }
     }
 
     private fun restoreGuessGrid() {
-        // Restoring grid in reverse guessHistory order to ensure user's sequential guesses
         for (i in guessHistory.indices) {
             val guess = guessHistory[i]
             for (j in guess.indices) {
@@ -135,58 +139,55 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    // Helper method to check for saved game state
-    private fun hasSavedGameState(): Boolean {
-        val sharedPreferences = getSharedPreferences("GamePrefs", MODE_PRIVATE)
-        return sharedPreferences.contains("currentGuessRow") // Or any key that holds your game state
-    }
-
     private fun submitGuess() {
+        Log.d("GameActivity", "Current guess row: $currentGuessRow")
         val guess = guessInput.text.toString()
 
-        // Check if guess is valid (5 digits)
         if (guess.length == 5 && guess.all { it.isDigit() }) {
             if (currentGuessRow < maxGuesses) {
-
-                Log.d("GameActivity", "Submitting guess: $guess at row $currentGuessRow")
-
-                // Update the grid with the guess and change colors
                 for (i in 0 until 5) {
                     val index = currentGuessRow * 5 + i
                     val textView = guessGrid.getChildAt(index) as TextView
                     textView.text = guess[i].toString()
-
-                    // Change color based on the guess
-                    textView.gravity = Gravity.CENTER
                     textView.setBackgroundColor(getColorForDigit(guess[i], i))
-                    textView.invalidate() // Forces the TextView to redraw
-
-                    Log.d("GameActivity", "Updating cell index $index with digit ${guess[i]}")
+                    textView.invalidate()
                 }
                 guessHistory.add(guess)
 
-                // Check if the guess is correct
                 if (guess == randomNumber) {
                     Toast.makeText(this, "Congratulations! You guessed the number!", Toast.LENGTH_SHORT).show()
-                    //clearSavedGameState()
-                    //resetGameBoard()
+                    clearGameStateAndLaunchShareScore()
                 } else if (currentGuessRow == maxGuesses - 1) {
                     Toast.makeText(this, "Maximum guesses reached! The correct number was $randomNumber.", Toast.LENGTH_LONG).show()
-                    //clearSavedGameState()
-                    //resetGameBoard()
+                    clearGameStateAndLaunchShareScore()
                 }
-
-                currentGuessRow++
-                guessInput.text.clear() // Clear the input after submission
+                else {
+                    currentGuessRow++
+                }
+                guessInput.text.clear()
                 guessGrid.invalidate()
                 guessGrid.requestLayout()
-
             } else {
                 Toast.makeText(this, "Maximum guesses reached", Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(this, "Please enter a valid 5-digit number", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun clearGameStateAndLaunchShareScore() {
+        // Launch the ShareScoreActivity and pass the guess history and random number
+        Toast.makeText(this, "Launching ShareScoreActivity", Toast.LENGTH_LONG).show()
+
+        val intent = Intent(this, ShareScoreActivity::class.java)
+        intent.putStringArrayListExtra("guessHistory", ArrayList(guessHistory))
+        intent.putExtra("randomNumber", randomNumber)
+        currentGuessRow = 0
+        startActivity(intent)
+
+        // Clear game state
+        resetGameBoard()
+        clearSavedGameState()
     }
 
     private fun provideHint() {
@@ -203,32 +204,33 @@ class GameActivity : AppCompatActivity() {
         guess.forEach { digit ->
             digitCount[digit] = digitCount.getOrDefault(digit, 0) + 1
         }
-        return digitCount.filter { it.value > 1 }.keys.toList() // Return duplicates
+        return digitCount.filter { it.value > 1 }.keys.toList()
     }
 
     private fun clearSavedGameState() {
         val prefs = getSharedPreferences("GamePrefs", MODE_PRIVATE).edit()
         prefs.clear()
         prefs.apply()
+        Log.d("GameActivity", "clearsavedgamestate $currentGuessRow")
     }
 
     private fun resetGameBoard() {
-        // Clear the guess grid and reset game variables
         for (i in 0 until guessGrid.childCount) {
             (guessGrid.getChildAt(i) as TextView).text = " "
             guessGrid.getChildAt(i).setBackgroundColor(Color.WHITE)
         }
         currentGuessRow = 0
-        randomNumber = generateRandomNumber() // Generate a new number
+        randomNumber = generateRandomNumber()
         guessHistory.clear()
         guessInput.text.clear()
+        Log.d("GameActivity", "Game board reset, currentGuessRow set to 0")
     }
 
     private fun getColorForDigit(digit: Char, index: Int): Int {
         return when {
-            digit == randomNumber[index] -> Color.GREEN // Correct digit in the correct place
-            randomNumber.contains(digit) -> Color.YELLOW // Correct digit but in the wrong place
-            else -> Color.WHITE // Incorrect digit
+            digit == randomNumber[index] -> Color.GREEN
+            randomNumber.contains(digit) -> Color.YELLOW
+            else -> Color.WHITE
         }
     }
 }
