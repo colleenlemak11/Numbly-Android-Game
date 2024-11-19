@@ -73,11 +73,9 @@ class GameActivity : AppCompatActivity() {
             resetGameBoard()
             clearSavedGameState()
             currentGuessRow = 0
-            Log.d("GameActivity", "Reset currentGuessRow to 0 in onResume()")
         }
         else {
             currentGuessRow = prefs.getInt("currentGuessRow", 0)
-            Log.d("GameActivity", "else stmt currentGuessRow: $currentGuessRow")
         }
     }
 
@@ -85,7 +83,6 @@ class GameActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("GamePrefs", MODE_PRIVATE).edit()
         prefs.putString("randomNumber", randomNumber)
         prefs.putInt("currentGuessRow", currentGuessRow)
-        Log.d("GameActivity", "saveGameState $currentGuessRow")
         prefs.putStringSet("guessHistory", guessHistory.toSet())
         prefs.apply()
     }
@@ -121,7 +118,7 @@ class GameActivity : AppCompatActivity() {
                 textSize = 40f
                 gravity = Gravity.CENTER
                 setBackgroundResource(android.R.color.white)
-                text = " "
+                text = "  "
             }
             guessGrid.addView(textView)
         }
@@ -140,8 +137,8 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun submitGuess() {
-        Log.d("GameActivity", "Current guess row: $currentGuessRow")
         val guess = guessInput.text.toString()
+        var gameOver = false
 
         if (guess.length == 5 && guess.all { it.isDigit() }) {
             if (currentGuessRow < maxGuesses) {
@@ -151,15 +148,16 @@ class GameActivity : AppCompatActivity() {
                     textView.text = guess[i].toString()
                     textView.setBackgroundColor(getColorForDigit(guess[i], i))
                     textView.invalidate()
+                    Log.d("GameActivity", "Updating TextView at index $index with guess: ${guess[i]}")
                 }
                 guessHistory.add(guess)
 
                 if (guess == randomNumber) {
                     Toast.makeText(this, "Congratulations! You guessed the number!", Toast.LENGTH_SHORT).show()
-                    clearGameStateAndLaunchShareScore()
+                    gameOver = true
                 } else if (currentGuessRow == maxGuesses - 1) {
                     Toast.makeText(this, "Maximum guesses reached! The correct number was $randomNumber.", Toast.LENGTH_LONG).show()
-                    clearGameStateAndLaunchShareScore()
+                    gameOver = true
                 }
                 else {
                     currentGuessRow++
@@ -167,6 +165,11 @@ class GameActivity : AppCompatActivity() {
                 guessInput.text.clear()
                 guessGrid.invalidate()
                 guessGrid.requestLayout()
+                if (gameOver) {
+                    guessInput.postDelayed({
+                        clearGameStateAndLaunchShareScore()
+                    }, 5000)
+                }
             } else {
                 Toast.makeText(this, "Maximum guesses reached", Toast.LENGTH_SHORT).show()
             }
@@ -216,7 +219,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun resetGameBoard() {
         for (i in 0 until guessGrid.childCount) {
-            (guessGrid.getChildAt(i) as TextView).text = " "
+            (guessGrid.getChildAt(i) as TextView).text = "  "
             guessGrid.getChildAt(i).setBackgroundColor(Color.WHITE)
         }
         currentGuessRow = 0

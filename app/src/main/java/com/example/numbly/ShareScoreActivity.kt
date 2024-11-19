@@ -39,9 +39,22 @@ class ShareScoreActivity : AppCompatActivity() {
         shareButton.setOnClickListener {
             val shareText = buildString {
                 append("I played Numbly and here's my result!\n")
-                append("Random Number: $randomNumber\n")
-                append("Guesses:\n")
-                guessHistory.forEach { append("$it\n") }
+
+                // Loop through each guess
+                for (guess in guessHistory) {
+                    for (i in guess.indices) {
+                        val guessChar = guess[i]
+                        val cellColor = getCellColor(guessChar, randomNumber, i)
+                        append(
+                            when (cellColor) {
+                                Color.GREEN -> "\uD83D\uDFE9" // Correct position
+                                Color.YELLOW -> "\uD83D\uDFE8" // Correct digit, wrong position
+                                else -> "⬛" // Incorrect digit
+                            }
+                        )
+                    }
+                    append("\n")
+                }
             }
 
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -71,8 +84,8 @@ class ShareScoreActivity : AppCompatActivity() {
                     setPadding(16, 16, 16, 16) // Add padding to the text for better spacing
 
                     // Set background color based on comparison with the random number
-                    setBackgroundColor(getCellColor(guessChar, randomNumber[i]))
-                    setTextColor(getCellTextColor(guessChar, randomNumber[i]))
+                    setBackgroundColor(getCellColor(guessChar, randomNumber, i))
+                    setTextColor(getCellTextColor(guessChar, randomNumber, i))
                     gravity = android.view.Gravity.CENTER // Center align the text inside the cell
                 }
 
@@ -85,18 +98,18 @@ class ShareScoreActivity : AppCompatActivity() {
         }
     }
 
-    private fun getCellColor(guessChar: Char, randomChar: Char): Int {
-        return when {
-            guessChar == randomChar -> Color.GREEN // Correct position
-            randomChar in guessChar.toString() -> Color.YELLOW // Correct digit, wrong position
+    private fun getCellColor(guessChar: Char, randomNumber: String, index: Int): Int {
+        return when (guessChar) {
+            randomNumber[index] -> Color.GREEN // Correct position
+            in randomNumber -> Color.YELLOW // Correct digit, wrong position
             else -> Color.BLACK // Incorrect digit (use black background for contrast)
         }
     }
 
-    private fun getCellTextColor(guessChar: Char, randomChar: Char): Int {
-        return when {
-            guessChar == randomChar -> Color.BLACK // Correct position (white text on green background)
-            randomChar in guessChar.toString() -> Color.BLACK // Correct digit, wrong position (white text on yellow background)
+    private fun getCellTextColor(guessChar: Char, randomNumber: String, index: Int): Int {
+        return when (guessChar) {
+            randomNumber[index] -> Color.BLACK // Correct position
+            in randomNumber -> Color.BLACK // Correct digit, wrong position
             else -> Color.WHITE // Incorrect digit (black text on black background)
         }
     }
