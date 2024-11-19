@@ -39,9 +39,22 @@ class ShareScoreActivity : AppCompatActivity() {
         shareButton.setOnClickListener {
             val shareText = buildString {
                 append("I played Numbly and here's my result!\n")
-                append("Random Number: $randomNumber\n")
-                append("Guesses:\n")
-                guessHistory.forEach { append("$it\n") }
+
+                // Loop through each guess
+                for (guess in guessHistory) {
+                    for (i in guess.indices) {
+                        val guessChar = guess[i]
+                        val cellColor = getCellColor(guessChar, randomNumber[i])
+                        append(
+                            when (cellColor) {
+                                Color.GREEN -> "\uD83D\uDFE9" // Correct position
+                                Color.YELLOW -> "\uD83D\uDFE8" // Correct digit, wrong position
+                                else -> "⬛" // Incorrect digit
+                            }
+                        )
+                    }
+                    append("\n")
+                }
             }
 
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
