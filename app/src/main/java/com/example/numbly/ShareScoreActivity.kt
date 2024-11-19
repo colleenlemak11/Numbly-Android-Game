@@ -85,7 +85,7 @@ class ShareScoreActivity : AppCompatActivity() {
 
                     // Set background color based on comparison with the random number
                     setBackgroundColor(getCellColor(guessChar, randomNumber, i))
-                    setTextColor(getCellTextColor(guessChar, randomNumber[i]))
+                    setTextColor(getCellTextColor(guessChar, randomNumber, i))
                     gravity = android.view.Gravity.CENTER // Center align the text inside the cell
                 }
 
@@ -106,10 +106,10 @@ class ShareScoreActivity : AppCompatActivity() {
         }
     }
 
-    private fun getCellTextColor(guessChar: Char, randomChar: Char): Int {
-        return when {
-            guessChar == randomChar -> Color.BLACK // Correct position (white text on green background)
-            randomChar in guessChar.toString() -> Color.BLACK // Correct digit, wrong position (white text on yellow background)
+    private fun getCellTextColor(guessChar: Char, randomNumber: String, index: Int): Int {
+        return when (guessChar) {
+            randomNumber[index] -> Color.BLACK // Correct position
+            in randomNumber -> Color.BLACK // Correct digit, wrong position
             else -> Color.WHITE // Incorrect digit (black text on black background)
         }
     }
