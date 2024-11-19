@@ -44,7 +44,7 @@ class ShareScoreActivity : AppCompatActivity() {
                 for (guess in guessHistory) {
                     for (i in guess.indices) {
                         val guessChar = guess[i]
-                        val cellColor = getCellColor(guessChar, randomNumber[i])
+                        val cellColor = getCellColor(guessChar, randomNumber, i)
                         append(
                             when (cellColor) {
                                 Color.GREEN -> "\uD83D\uDFE9" // Correct position
@@ -84,7 +84,7 @@ class ShareScoreActivity : AppCompatActivity() {
                     setPadding(16, 16, 16, 16) // Add padding to the text for better spacing
 
                     // Set background color based on comparison with the random number
-                    setBackgroundColor(getCellColor(guessChar, randomNumber[i]))
+                    setBackgroundColor(getCellColor(guessChar, randomNumber, i))
                     setTextColor(getCellTextColor(guessChar, randomNumber[i]))
                     gravity = android.view.Gravity.CENTER // Center align the text inside the cell
                 }
@@ -98,10 +98,10 @@ class ShareScoreActivity : AppCompatActivity() {
         }
     }
 
-    private fun getCellColor(guessChar: Char, randomChar: Char): Int {
-        return when {
-            guessChar == randomChar -> Color.GREEN // Correct position
-            randomChar in guessChar.toString() -> Color.YELLOW // Correct digit, wrong position
+    private fun getCellColor(guessChar: Char, randomNumber: String, index: Int): Int {
+        return when (guessChar) {
+            randomNumber[index] -> Color.GREEN // Correct position
+            in randomNumber -> Color.YELLOW // Correct digit, wrong position
             else -> Color.BLACK // Incorrect digit (use black background for contrast)
         }
     }
