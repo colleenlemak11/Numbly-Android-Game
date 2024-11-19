@@ -1,7 +1,7 @@
 # Numbly
 
 ### Team Members: Colleen Lemak  
-### Version 0  
+### Version 1  
 
 ## Summary of Project  
 Numbly combines the addictive thrill of Wordle with the excitement of numbers, delivering a brain-boosting puzzle which fosters social interaction and friendly competition for all ages. In the growing $25.86 billion casual gaming market, Numbly stands out by challenging users to think critically, test their luck, and exercise their problem-solving skills (Casual Games). Take a quick break, sharpen your mind, and join a vibrant community of puzzle enthusiasts. How fast can you crack the number of the day?
