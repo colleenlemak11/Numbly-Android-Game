@@ -42,14 +42,16 @@
     <GridLayout
         android:id="@+id/guessGrid"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:columnCount="5"
         android:rowCount="5"
         android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:padding="8dp"
-        android:background="#E0E0E0">
+        android:layout_marginTop="20dp"
+        android:paddingBottom="90dp"
+        android:paddingTop="30dp"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:background="@color/purple_200">
     </GridLayout>
 
 </LinearLayout>
