@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Numbly</string>
+    <string name="instructions">Guess the 5-digit number!\n\n\uD83D\uDFE9 = \u2705 digit, \u2705 placement\n\uD83D\uDFE8 = \u2705 digit, \u274C placement\n⬛ = \u274C digit, \u274C placement</string>
 </resources>

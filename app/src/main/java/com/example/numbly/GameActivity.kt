@@ -111,14 +111,16 @@ class GameActivity : AppCompatActivity() {
         for (i in 0 until 25) {
             val textView = TextView(this).apply {
                 layoutParams = GridLayout.LayoutParams().apply {
-                    width = GridLayout.LayoutParams.WRAP_CONTENT
-                    height = GridLayout.LayoutParams.WRAP_CONTENT
-                    setMargins(4, 4, 4, 4)
+                    width = 0 // Adjust to span evenly across the GridLayout
+                    height = 0 // Adjust to span evenly across the GridLayout
+                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    rowSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                    setMargins(6, 6, 6, 6)
                 }
                 textSize = 40f
-                gravity = Gravity.CENTER
-                setBackgroundResource(android.R.color.white)
-                text = "  "
+                gravity = Gravity.CENTER // Center text inside each TextView
+                setBackgroundResource(android.R.color.white) // Placeholder background
+                text = "" // Empty placeholder
             }
             guessGrid.addView(textView)
         }
@@ -147,6 +149,7 @@ class GameActivity : AppCompatActivity() {
                     val textView = guessGrid.getChildAt(index) as TextView
                     textView.text = guess[i].toString()
                     textView.setBackgroundColor(getColorForDigit(guess[i], i))
+                    textView.setTextColor(getCellTextColor(guess[i], randomNumber, i))
                     textView.invalidate()
                     Log.d("GameActivity", "Updating TextView at index $index with guess: ${guess[i]}")
                 }
@@ -193,6 +196,14 @@ class GameActivity : AppCompatActivity() {
         clearSavedGameState()
     }
 
+    private fun getCellTextColor(guessChar: Char, randomNumber: String, index: Int): Int {
+        return when (guessChar) {
+            randomNumber[index] -> Color.BLACK // Correct position
+            in randomNumber -> Color.BLACK // Correct digit, wrong position
+            else -> Color.WHITE // Incorrect digit (white text on black background)
+        }
+    }
+
     private fun provideHint() {
         val duplicates = findDuplicates(randomNumber)
         if (duplicates.isNotEmpty()) {
@@ -233,7 +244,7 @@ class GameActivity : AppCompatActivity() {
         return when {
             digit == randomNumber[index] -> Color.GREEN
             randomNumber.contains(digit) -> Color.YELLOW
-            else -> Color.WHITE
+            else -> Color.BLACK
         }
     }
 }
