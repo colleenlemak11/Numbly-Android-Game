@@ -18,15 +18,32 @@
         android:textSize="40sp"
         android:layout_marginBottom="16dp" />
 
+    <!-- GridLayout to show the guesses -->
+    <GridLayout
+        android:id="@+id/guessGrid"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:columnCount="5"
+        android:rowCount="5"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:paddingBottom="30dp"
+        android:paddingTop="15dp"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:background="@color/purple_200">
+    </GridLayout>
+
     <!-- Button to submit guess -->
     <Button
         android:id="@+id/submitGuessButton"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit Guess"
         android:layout_gravity="center"
         android:textSize="40sp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="12dp" />
 
     <!-- Button to get a hint about duplicate digits -->
     <Button
@@ -35,23 +52,6 @@
         android:layout_height="wrap_content"
         android:text="Get Hint"
         android:layout_gravity="center"
-        android:textSize="30sp"
-        android:layout_marginBottom="16dp" />
-
-    <!-- GridLayout to show the guesses -->
-    <GridLayout
-        android:id="@+id/guessGrid"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:columnCount="5"
-        android:rowCount="5"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:paddingBottom="90dp"
-        android:paddingTop="30dp"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
-        android:background="@color/purple_200">
-    </GridLayout>
+        android:textSize="30sp" />
 
 </LinearLayout>

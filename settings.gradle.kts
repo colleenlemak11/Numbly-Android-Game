@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BasicStorage"
+rootProject.name = "Numbly"
 include(":app")
